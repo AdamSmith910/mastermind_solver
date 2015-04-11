@@ -21,8 +21,10 @@ class MasterMind
 
   def play
     get_code
-    while turns < 11 && win == false
+    while turns < 10 && win == false
       get_guess
+      puts "\n"
+      puts "Turn #{turns + 1}"
       puts "\n"
       print code
       puts "\n"
@@ -31,6 +33,7 @@ class MasterMind
       evaluate_for_white_pegs
       @turns += 1
     end
+    lose
   end
 
   def evaluate_for_black_pegs
@@ -84,7 +87,16 @@ class MasterMind
   end
 
   def win?
-    code == guess
+    if code == guess
+      @win = true
+      print "\n"
+      print "You win!"
+    end
+  end
+
+  def lose
+    print "\n"
+    print "You lose!"
   end
 
 end
