@@ -5,7 +5,7 @@ class MasterMind
               :white_pegs, :turns, :win,
               :black_pegs, :possible_codes,
               :possible_guesses, :code_count_hash,
-              :guess_count_hash
+              :guess_count_hash, :guess_history
 
   def initialize
     @colors = ["red", "blue", "green", "yellow", "orange", "purple"]
@@ -15,6 +15,7 @@ class MasterMind
     generate_possible_codes
     @guess = []
     @code = []
+    @guess_history = []
   end
 
   def generate_possible_codes
@@ -112,6 +113,7 @@ class MasterMind
 
   def get_guess
     @guess = possible_guesses.sample
+    @guess_history << guess
   end
 
   def play
