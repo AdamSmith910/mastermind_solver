@@ -3,9 +3,9 @@ require "pry"
 class MasterMind
   attr_reader :colors, :code, :guess, 
               :white_pegs, :turns, :win,
-              :code_el_num, :guess_el_num,
               :black_pegs, :possible_codes,
-              :possible_guesses
+              :possible_guesses, :code_count_hash,
+              :guess_count_hash
 
   def initialize
     @colors = ["red", "blue", "green", "yellow", "orange", "purple"]
@@ -13,6 +13,8 @@ class MasterMind
     @white_pegs = 0
     @win = false
     generate_possible_codes
+    @guess = []
+    @code = []
   end
 
   def generate_possible_codes
@@ -109,14 +111,14 @@ class MasterMind
   end
 
   def get_guess
-    @guess = (1..4).map { colors.sample }
+    @guess = possible_guesses.sample
   end
 
   def play
     get_code
     puts "\n"
     print possible_guesses.size
-    while turns < 10
+    while turns < 10 || win == true
       get_guess
       puts "\n"
       puts "Turn #{turns + 1}"
@@ -128,11 +130,11 @@ class MasterMind
       evaluate_for_white_pegs
       @turns += 1
     end
-    
     lose
   end
 
   def evaluate_for_black_pegs
+    win?
     @black_pegs = 0
     i = 0
     while i < 4
@@ -144,32 +146,38 @@ class MasterMind
   end
 
   def evaluate_for_white_pegs
-    win?
     @white_pegs = 0
+
     matching = code & guess
-    @code_el_num = 0
-    @guess_el_num = 0
+    code_count_hash = Hash.new(0)
+    guess_count_hash = Hash.new(0)
 
-    matching.each do |match_el|
-      code.each do |code_el|
-        if code_el == match_el
-          @code_el_num += 1
+    matching.each do |match|
+      code.each do |element|
+        if match == element
+          code_count_hash[element] += 1
         end
       end
     end
+    code_values = code_count_hash.values
 
-    matching.each do |match_el|
-      guess.each do |guess_el|
-        if guess_el == match_el
-          @guess_el_num += 1
+    matching.each do |match|
+      guess.each do |element|
+        if match == element
+          guess_count_hash[element] += 1
         end
       end
     end
+    guess_values = guess_count_hash.values
 
-    if code_el_num < guess_el_num
-      @white_pegs += code_el_num
-    else
-      @white_pegs += guess_el_num
+    guess_values.each do |guess_val|
+      code_values.each do |code_val|
+        if code_val > guess_val
+          @white_pegs += guess_val
+        else
+          @white_pegs += code_val
+        end
+      end
     end
 
     @white_pegs = white_pegs - black_pegs
