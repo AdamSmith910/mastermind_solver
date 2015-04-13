@@ -147,37 +147,31 @@ class MasterMind
 
   def evaluate_for_white_pegs
     @white_pegs = 0
+    code_white = 0
+    guess_white = 0
 
     matching = code & guess
     code_count_hash = Hash.new(0)
     guess_count_hash = Hash.new(0)
 
     matching.each do |match|
-      code.each do |element|
-        if match == element
-          code_count_hash[element] += 1
+      code.each do |code_el|
+        if match == code_el
+          code_white += 1
+        end
+      end
+
+      guess.each do |guess_el|
+        if match == guess_el
+          guess_white += 1
         end
       end
     end
-    code_values = code_count_hash.values
 
-    matching.each do |match|
-      guess.each do |element|
-        if match == element
-          guess_count_hash[element] += 1
-        end
-      end
-    end
-    guess_values = guess_count_hash.values
-
-    guess_values.each do |guess_val|
-      code_values.each do |code_val|
-        if code_val > guess_val
-          @white_pegs += guess_val
-        else
-          @white_pegs += code_val
-        end
-      end
+    if code_white > guess_white
+      @white_pegs += guess_white
+    else
+      @white_pegs += code_white
     end
 
     @white_pegs = white_pegs - black_pegs
