@@ -1,5 +1,6 @@
 require "pry"
 require_relative "generator.rb"
+require_relative "ai.rb"
 
 class MasterMind
   attr_reader :code, :guess, 
@@ -8,10 +9,9 @@ class MasterMind
               :guess_count_hash, :possible_guesses,
               :guess, :last_guess, :last_black,
               :last_white, :still_viable_guesses,
-              :test_code
+              :ai
 
   def initialize
-    @colors = ["red", "blue", "green", "yellow", "orange", "purple"]
     @turns = 0
     @white_pegs = 0
     @win = false
@@ -23,6 +23,7 @@ class MasterMind
     @last_white = []
     @still_viable_guesses = []
     @test_code = []
+    @ai = AI.new
   end
 
   def get_code
@@ -49,7 +50,7 @@ class MasterMind
       print guess
       evaluate_for_black_pegs
       evaluate_for_white_pegs
-      eliminate
+      ai.eliminate
       @turns += 1
     end
     game_over
@@ -110,56 +111,6 @@ class MasterMind
     print black_pegs
     print "\n"
     print white_pegs
-  end
-
-  def eliminate
-    test_white = 0
-
-    @test_code = last_guess.last
-    test_black = last_black.last
-    test_white = last_white.last
-
-    possible_guesses.each do |possible_guess|
-      if provisional_black(possible_guess) == test_black && provisional_white(possible_guess) == test_white
-        @still_viable_guesses << possible_guess
-      end
-    end
-
-    @possible_guesses = still_viable_guesses
-    binding.pry
-  end
-
-  def provisional_black(guess_option)
-    prov_black = 0
-    i = 0
-    while i < 4
-      if test_code[i] == guess_option[i]
-        prov_black += 1
-      end
-      i += 1
-    end
-    prov_black
-  end
-
-  def provisional_white(guess_option)
-    prov_white = 0
-    matching = test_code & guess_option
-
-    matching.each do |match|
-      guess_option.each do |guess_el|
-        if match == guess_el
-          prov_white += 1
-        end
-      end
-    end
-
-    prov_white = prov_white - provisional_black(guess_option)
-
-    if prov_white > 2
-      prov_white = prov_white - 1
-    end
-
-    prov_white
   end
 
   def win?
