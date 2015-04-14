@@ -16,19 +16,8 @@ class MasterMind
     generate_possible_codes
     @guess = []
     @code = []
-    @previous_guesses = []
     @must_have = []
     @still_viable_guesses = []
-  end
-
-  def generate_new_possible_codes
-    @possible_codes = []
-    @possible_guesses = []
-
-    new_initial_combos
-  end
-
-  def new_initial_combos
   end
 
   def generate_possible_codes
@@ -123,7 +112,7 @@ class MasterMind
   end
 
   def get_code
-    @code = (1..4).map { colors.sample }
+    @code = ["blue", "orange", "green", "purple"]
   end
 
   def get_guess
@@ -140,15 +129,7 @@ class MasterMind
     elsif turns == 5
       @guess = ["yellow", "yellow", "yellow", "yellow"]
     else
-      if white_pegs == 2 && black_pegs == 2
-        guess.each do |color|
-          @colors << color
-        end
-        generate_new_possible_codes
-        @guess = possible_guesses.sample
-      else
-        @guess = possible_guesses.sample
-      end
+      @guess = possible_guesses.sample
     end
 
     @possible_guesses.delete(@guess)
