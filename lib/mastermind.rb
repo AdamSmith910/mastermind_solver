@@ -5,7 +5,8 @@ class MasterMind
               :white_pegs, :turns, :win,
               :black_pegs, :possible_codes,
               :possible_guesses, :code_count_hash,
-              :guess_count_hash, :guess_history
+              :guess_count_hash, :must_have, 
+              :still_viable_guesses
 
   def initialize
     @colors = ["red", "blue", "green", "yellow", "orange", "purple"]
@@ -15,7 +16,19 @@ class MasterMind
     generate_possible_codes
     @guess = []
     @code = []
-    @guess_history = []
+    @previous_guesses = []
+    @must_have = []
+    @still_viable_guesses = []
+  end
+
+  def generate_new_possible_codes
+    @possible_codes = []
+    @possible_guesses = []
+
+    new_initial_combos
+  end
+
+  def new_initial_combos
   end
 
   def generate_possible_codes
@@ -36,9 +49,11 @@ class MasterMind
     guess_combo.each do |element|
       @possible_guesses << element.flatten
     end
+
     guess_combo.each do |element|
       @possible_guesses << element.reverse.flatten
     end
+
     @possible_guesses = possible_guesses.uniq
   end
 
@@ -112,15 +127,38 @@ class MasterMind
   end
 
   def get_guess
-    @guess = possible_guesses.sample
-    @guess_history << guess
+    if turns == 0
+      @guess = ["red", "red", "red", "red"]
+    elsif turns == 1
+      @guess = ["blue", "blue", "blue", "blue"]
+    elsif turns == 2
+      @guess = ["orange", "orange", "orange", "orange"]
+    elsif turns == 3
+      @guess = ["green", "green", "green", "green"]
+    elsif turns == 4
+      @guess = ["purple", "purple", "purple", "purple"]
+    elsif turns == 5
+      @guess = ["yellow", "yellow", "yellow", "yellow"]
+    else
+      if white_pegs == 2 && black_pegs == 2
+        guess.each do |color|
+          @colors << color
+        end
+        generate_new_possible_codes
+        @guess = possible_guesses.sample
+      else
+        @guess = possible_guesses.sample
+      end
+    end
+
+    @possible_guesses.delete(@guess)
   end
 
   def play
     get_code
     puts "\n"
     print possible_guesses.size
-    while turns < 10 || win == true
+    while turns < 1297 && win == false
       get_guess
       puts "\n"
       puts "Turn #{turns + 1}"
@@ -132,7 +170,7 @@ class MasterMind
       evaluate_for_white_pegs
       @turns += 1
     end
-    lose
+    game_over
   end
 
   def evaluate_for_black_pegs
@@ -178,6 +216,13 @@ class MasterMind
 
     @white_pegs = white_pegs - black_pegs
 
+    if white_pegs > 2
+      @white_pegs = white_pegs - 1
+    end
+
+    guess_score
+    must_include
+
     print "\n"
     print matching
     print "\n"
@@ -186,19 +231,70 @@ class MasterMind
     print white_pegs
   end
 
-  def win?
-    if code == guess
-      @win = true
-      print "\n"
-      print "You win!"
+  def guess_score
+    score_of_guess = Hash.new(0)
+    score_of_guess[@guess] = white_pegs + black_pegs
+    eliminate(score_of_guess)
+    must_include
+  end
+
+  def must_include
+    to_remove = []
+
+    if black_pegs > 0
+      @must_have << guess.first
+    end
+
+    must_have.each do |color|
+      possible_guesses.each do |possible_guess|
+        unless possible_guess.include?(color)
+          to_remove << possible_guess
+        end
+      end
+    end
+
+    to_remove.each do |guess_to_delete|
+      @possible_guesses.delete(guess_to_delete)
+    end
+  end 
+
+
+  def eliminate(score_of_guess)
+    to_remove = []
+    colors_to_go = []
+    colors_to_go = score_of_guess.keys[0]
+    looking_for_zero = score_of_guess.values[0]
+
+    if looking_for_zero == 0
+      colors_to_go.each do |color|
+        possible_guesses.each do |guess|
+          if guess.include?(color)
+            to_remove << guess
+          end
+        end
+      end
+    end
+
+    to_remove.each do |guess|
+      @possible_guesses.delete(guess)
     end
   end
 
-  def lose
-    print "\n"
-    print "You lose!"
+  def win?
+    if code == guess
+      @win = true
+    end
   end
 
+  def game_over
+    if @win == false
+      print "\n"
+      print "You lose!"
+    else
+      print "\n"
+      print "You win!"
+    end
+  end  
 end
 
 game = MasterMind.new
