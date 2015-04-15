@@ -1,19 +1,21 @@
 require "pry"
+require_relative "computer_guess.rb"
 
 class AI
-  attr_reader :test_code, :still_viable_guesses
+  attr_reader :test_code, :still_viable_guesses, :computer_guess
 
   def initialize
-    @test_code = ""
+    @test_code = []
     @still_viable_guesses = []
+    @computer_guess = ComputerGuess.new
   end
 
-  def eliminate(possible_guesses)
+  def eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
     test_white = 0
 
-    @test_code = mastermind.previous_guesses.last
-    test_black = mastermind.last_black.last
-    test_white = mastermind.last_white.last
+    @test_code = previous_guesses.last
+    test_black = previous_black.last
+    test_white = previous_white.last
 
     possible_guesses.each do |possible_guess|
       if provisional_black(possible_guess) == test_black && provisional_white(possible_guess) == test_white
@@ -21,7 +23,7 @@ class AI
       end
     end
 
-    @possible_guesses = still_viable_guesses
+    computer_guess.find_possible_guesses(still_viable_guesses)
   end
 
   def provisional_black(guess_option)
@@ -38,20 +40,31 @@ class AI
 
   def provisional_white(guess_option)
     prov_white = 0
+    test_code_white = 0
+    test_guess_white = 0
     matching = test_code & guess_option
 
-    matching.each do |match|
-      guess_option.each do |guess_el|
-        if match == guess_el
-          prov_white += 1
+    matching.each do |match_color|
+      i = 0
+      while i < 4
+        if test_code[i] == match_color
+          unless test_code[i] == guess_option[i]
+            test_code_white += 1
+          end
         end
+        if guess_option[i] == match_color
+          unless guess_option[i] == test_code[i]
+            test_guess_white += 1
+          end
+        end
+        i += 1
       end
     end
 
-    prov_white = prov_white - provisional_black(guess_option)
-
-    if prov_white > 2
-      prov_white = prov_white - 1
+    if test_code_white > test_guess_white
+      prov_white += test_guess_white
+    else
+      prov_white += test_code_white
     end
 
     prov_white
