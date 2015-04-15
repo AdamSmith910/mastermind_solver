@@ -27,7 +27,8 @@ class MasterMind
     puts "\n"
     print possible_guesses.size
     while turns < 1297 && win == false
-      this_guess = computer.get_computer_guess
+      computer.get_computer_guess(possible_guesses)
+      this_guess = computer.computer_guess
       previous_guesses = computer.previous_guesses
       win?(this_games_code, this_guess)
       puts "\n"
@@ -42,10 +43,8 @@ class MasterMind
       evaluator.evaluate_for_white_pegs(this_games_code, this_guess)
       previous_white = evaluator.previous_white
 
-      if computer.still_viable != nil
-        possible_guesses = computer.still_viable
-      end
       ai.eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
+      possible_guesses = ai.still_viable_guesses
       @turns += 1
     end
     game_over

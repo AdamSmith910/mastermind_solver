@@ -1,12 +1,14 @@
 require "pry"
 
 class Generator
-  attr_reader :possible_codes, :possible_guesses, :colors
+  attr_reader :possible_codes, :possible_guesses, :colors,
+              :still_viable_guesses
 
   def initialize
     @colors = ["blue", "green", "orange", "purple", "red", "yellow"]
     @possible_codes = []
     @possible_guesses = []
+    @still_viable_guesses = []
   end
 
   def generate_possible_codes
