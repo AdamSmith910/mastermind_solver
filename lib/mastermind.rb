@@ -8,11 +8,12 @@ require_relative "computer_guess.rb"
 class MasterMind
   attr_reader :turns, :win, :game_code,
               :computer, :evaluator,
-              :generator, :ai
+              :generator, :ai, :still_viable
 
   def initialize
     @turns = 0
     @win = false
+    @still_viable = []
     @game_code = GameCode.new
     @computer = ComputerGuess.new
     @evaluator = Evaluate.new
@@ -26,10 +27,16 @@ class MasterMind
     this_games_code = game_code.get_game_code(possible_guesses)
     puts "\n"
     print possible_guesses.size
-    while turns < 1297 && win == false
-      computer.get_computer_guess(possible_guesses)
+    while turns < 10 && win == false
+      if still_viable.size > 0
+        computer.get_educated_guess(@still_viable)
+      else
+        computer.get_computer_guess
+      end
+      
       this_guess = computer.computer_guess
       previous_guesses = computer.previous_guesses
+      possible_guesses = computer.possible_computer_guesses
       win?(this_games_code, this_guess)
       puts "\n"
       puts "Turn #{turns + 1}"
@@ -44,7 +51,7 @@ class MasterMind
       previous_white = evaluator.previous_white
 
       ai.eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
-      possible_guesses = ai.still_viable_guesses
+      @still_viable = ai.still_viable_guesses
       @turns += 1
     end
     game_over

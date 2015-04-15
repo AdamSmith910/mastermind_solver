@@ -7,11 +7,10 @@ class AI
   def initialize
     @test_code = []
     @generator = Generator.new
-    @still_viable_guesses = []
   end
 
   def eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
-    new_viable_guesses = []
+    @still_viable_guesses = []
     test_white = 0
 
     @test_code = previous_guesses.last
@@ -20,11 +19,9 @@ class AI
 
     possible_guesses.each do |possible_guess|
       if provisional_black(possible_guess) == test_black && provisional_white(possible_guess) == test_white
-        new_viable_guesses << possible_guess
+        @still_viable_guesses << possible_guess
       end
     end
-
-    @still_viable_guesses << new_viable_guesses
   end
 
   def provisional_black(guess_option)

@@ -29,6 +29,7 @@ class Evaluate
     @white_pegs = 0
     code_white = 0
     guess_white = 0
+    matching = []
     matching = game_code & computer_guess
 
     matching.each do |match_color|

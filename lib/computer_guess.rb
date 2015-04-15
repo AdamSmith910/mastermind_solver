@@ -1,26 +1,31 @@
 require "pry"
 require_relative "generator.rb"
-require_relative "ai.rb"
 
 class ComputerGuess
   attr_reader :computer_guess, :previous_guesses,
-              :ai, :generator
+              :possible_computer_guesses, :generator
 
   def initialize
     @computer_guess = []
     @previous_guesses = []
-    @ai = AI.new
+    @possible_computer_guesses = []
     @generator = Generator.new
     generator.generate_possible_codes
   end
 
-  def get_computer_guess(possible_guesses = nil)
-    if possible_guesses == nil
-      possible_guesses = generator.possible_guesses
-    else
-      possible_guesses = possible_guesses
-    end
-    @computer_guess = possible_guesses.sample
+  def get_educated_guess(still_viable)
+    @possible_computer_guesses = still_viable
+    @computer_guess = possible_computer_guesses.sample
     @previous_guesses << computer_guess
+  end
+
+  def get_computer_guess
+    get_possible
+    @computer_guess = possible_computer_guesses.sample
+    @previous_guesses << computer_guess 
+  end
+
+  def get_possible
+    @possible_computer_guesses = generator.possible_guesses 
   end
 end
