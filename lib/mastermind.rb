@@ -1,122 +1,42 @@
 require "pry"
-require_relative "generator.rb"
 require_relative "ai.rb"
+require_relative "generator.rb"
+require_relative "game_code.rb"
+require_relative "evaluate.rb"
+require_relative "computer_guess.rb"
 
 class MasterMind
-  attr_reader :code, :guess, 
-              :white_pegs, :turns, :win,
-              :black_pegs, :code_count_hash,
-              :guess_count_hash, :possible_guesses,
-              :guess, :last_guess, :last_black,
-              :last_white, :still_viable_guesses,
-              :ai
+  attr_reader :turns, :win, :game_code,
+              :computer_guess, :evaluator,
+              :generator
 
   def initialize
     @turns = 0
-    @white_pegs = 0
     @win = false
-    @guess = []
-    @code = []
-    @possible_guesses = Generator.new.generate_possible_codes
-    @last_guess = []
-    @last_black = []
-    @last_white = []
-    @still_viable_guesses = []
-    @test_code = []
-    @ai = AI.new
-  end
-
-  def get_code
-    @code = possible_guesses.sample
-  end
-
-  def get_guess
-    @guess = possible_guesses.sample
-    @last_guess << @guess
-    @possible_guesses.delete(@guess)
+    @game_code = GameCode.new
+    @computer_guess = ComputerGuess.new
+    @evaluator = Evaluate.new
+    @generator = Generator.new
   end
 
   def play
-    get_code
+    generator.generate_possible_codes
+    game_code.get_game_code
     puts "\n"
-    print possible_guesses.size
+    print generator.possible_guesses.size
     while turns < 1297 && win == false
-      get_guess
+      computer_guess.get_computer_guess
       puts "\n"
       puts "Turn #{turns + 1}"
       puts "\n"
-      print code
+      print game_code.game_code
       puts "\n"
-      print guess
-      evaluate_for_black_pegs
-      evaluate_for_white_pegs
-      ai.eliminate
+      print computer_guess.computer_guess
+      evaluator.evaluate_for_black_pegs
+      evaluator.evaluate_for_white_pegs
       @turns += 1
     end
     game_over
-  end
-
-  def evaluate_for_black_pegs
-    win?
-    @black_pegs = 0
-    i = 0
-    while i < 4
-      if code[i] == guess[i]
-        @black_pegs += 1
-      end
-      i += 1
-    end
-  end
-
-  def evaluate_for_white_pegs
-    @white_pegs = 0
-    code_white = 0
-    guess_white = 0
-
-    matching = code & guess
-    code_count_hash = Hash.new(0)
-    guess_count_hash = Hash.new(0)
-
-    matching.each do |match|
-      code.each do |code_el|
-        if match == code_el
-          code_white += 1
-        end
-      end
-
-      guess.each do |guess_el|
-        if match == guess_el
-          guess_white += 1
-        end
-      end
-    end
-
-    if code_white > guess_white
-      @white_pegs += guess_white
-    else
-      @white_pegs += code_white
-    end
-
-    @white_pegs = white_pegs - black_pegs
-
-    if white_pegs > 2
-      @white_pegs = white_pegs - 1
-    end
-    @last_black << black_pegs
-    @last_white << white_pegs
-
-    print "\n"
-    print matching
-    print "\n"
-    print black_pegs
-    print "\n"
-    print white_pegs
-  end
-
-  def win?
-    if code == guess
-      @win = true
-    end
   end
 
   def game_over

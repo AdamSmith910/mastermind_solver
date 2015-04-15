@@ -1,18 +1,17 @@
-require_relative "mastermind.rb"
+require "pry"
 
 class AI
-  attr_reader :test_code, :mastermind, :last_guess
+  attr_reader :test_code, :still_viable_guesses
 
   def initialize
-    @test_code = []
-    @mastermind = MasterMind.new
-    @last_guess = mastermind.get_guess
+    @test_code = ""
+    @still_viable_guesses = []
   end
 
   def eliminate
     test_white = 0
 
-    @test_code = mastermind.last_guess.last
+    @test_code = mastermind.previous_guesses.last
     test_black = mastermind.last_black.last
     test_white = mastermind.last_white.last
 
