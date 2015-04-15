@@ -4,23 +4,20 @@ require_relative "computer_guess.rb"
 
 class Evaluate
   attr_reader :black_pegs, :white_pegs, :previous_black,
-              :previous_white, :game_code, :computer_guess
+              :previous_white
 
   def initialize
     @black_pegs = 0
     @white_pegs = 0
     @previous_black = []
     @previous_white = []
-    @game_code = GameCode.new
-    @computer_guess = ComputerGuess.new
   end
 
-  def evaluate_for_black_pegs
-    win?
+  def evaluate_for_black_pegs(game_code, computer_guess)
     @black_pegs = 0
     i = 0
     while i < 4
-      if game_code.game_code[i] == computer_guess.computer_guess[i]
+      if game_code[i] == computer_guess[i]
         @black_pegs += 1
       end
       i += 1
@@ -28,21 +25,21 @@ class Evaluate
     @previous_black << black_pegs
   end
 
-  def evaluate_for_white_pegs
+  def evaluate_for_white_pegs(game_code, computer_guess)
     @white_pegs = 0
     code_white = 0
     guess_white = 0
 
-    matching = game_code.game_code & computer_guess.computer_guess
+    matching = game_code & computer_guess
 
     matching.each do |match|
-      game_code.game_code.each do |code_el|
+      game_code.each do |code_el|
         if match == code_el
           code_white += 1
         end
       end
 
-      guess.each do |guess_el|
+      computer_guess.each do |guess_el|
         if match == guess_el
           guess_white += 1
         end
@@ -69,11 +66,5 @@ class Evaluate
     print black_pegs
     print "\n"
     print white_pegs
-  end
-
-  def win?
-    if game_code.game_code == computer_guess.computer_guess
-      @win = true
-    end
   end
 end

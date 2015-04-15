@@ -20,20 +20,20 @@ class MasterMind
   end
 
   def play
-    generator.generate_possible_codes
-    game_code.get_game_code
+    this_games_code = game_code.get_game_code
     puts "\n"
     print generator.possible_guesses.size
     while turns < 1297 && win == false
-      computer_guess.get_computer_guess
+      this_guess = computer_guess.get_computer_guess
+      win?(this_games_code, this_guess)
       puts "\n"
       puts "Turn #{turns + 1}"
       puts "\n"
-      print game_code.game_code
+      print this_games_code
       puts "\n"
-      print computer_guess.computer_guess
-      evaluator.evaluate_for_black_pegs
-      evaluator.evaluate_for_white_pegs
+      print this_guess
+      evaluator.evaluate_for_black_pegs(this_games_code, this_guess)
+      evaluator.evaluate_for_white_pegs(this_games_code, this_guess)
       @turns += 1
     end
     game_over
@@ -47,7 +47,13 @@ class MasterMind
       print "\n"
       print "You win!"
     end
-  end  
+  end
+
+  def win?(game_code, computer_guess)
+    if game_code == computer_guess
+      @win = true
+    end
+  end 
 end
 
 game = MasterMind.new
