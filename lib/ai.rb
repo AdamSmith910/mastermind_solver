@@ -8,7 +8,7 @@ class AI
     @still_viable_guesses = []
   end
 
-  def eliminate
+  def eliminate(possible_guesses)
     test_white = 0
 
     @test_code = mastermind.previous_guesses.last
@@ -22,7 +22,6 @@ class AI
     end
 
     @possible_guesses = still_viable_guesses
-    binding.pry
   end
 
   def provisional_black(guess_option)

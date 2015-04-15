@@ -20,9 +20,11 @@ class MasterMind
   end
 
   def play
-    this_games_code = game_code.get_game_code
+    generator.generate_possible_codes
+    possible_guesses = generator.possible_guesses
+    this_games_code = game_code.get_game_code(possible_guesses)
     puts "\n"
-    print generator.possible_guesses.size
+    print possible_guesses.size
     while turns < 1297 && win == false
       this_guess = computer_guess.get_computer_guess
       win?(this_games_code, this_guess)

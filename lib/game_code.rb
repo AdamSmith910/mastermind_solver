@@ -6,10 +6,10 @@ class GameCode
   attr_reader :game_code
 
   def initialize
-    @game_code = Generator.new.generate_possible_codes.sample
+    @game_code = []
   end
 
-  def get_game_code
-    @game_code
+  def get_game_code(possible_guesses)
+    @game_code = possible_guesses.sample
   end
 end
