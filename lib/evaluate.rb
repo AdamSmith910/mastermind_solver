@@ -29,20 +29,22 @@ class Evaluate
     @white_pegs = 0
     code_white = 0
     guess_white = 0
-
     matching = game_code & computer_guess
 
-    matching.each do |match|
-      game_code.each do |code_el|
-        if match == code_el
-          code_white += 1
+    matching.each do |match_color|
+      i = 0
+      while i < 4
+        if game_code[i] == match_color
+          unless game_code[i] == computer_guess[i]
+            code_white += 1
+          end
         end
-      end
-
-      computer_guess.each do |guess_el|
-        if match == guess_el
-          guess_white += 1
+        if computer_guess[i] == match_color
+          unless computer_guess[i] == game_code[i]
+            guess_white += 1
+          end
         end
+        i += 1
       end
     end
 
@@ -50,12 +52,6 @@ class Evaluate
       @white_pegs += guess_white
     else
       @white_pegs += code_white
-    end
-
-    @white_pegs = white_pegs - black_pegs
-
-    if white_pegs > 2
-      @white_pegs = white_pegs - 1
     end
     
     @previous_white << white_pegs
