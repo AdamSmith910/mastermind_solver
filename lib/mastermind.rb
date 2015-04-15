@@ -36,7 +36,6 @@ class MasterMind
       puts "\n"
       print this_guess
 
-
       evaluator.evaluate_for_black_pegs(this_games_code, this_guess)
       previous_black = evaluator.previous_black
 

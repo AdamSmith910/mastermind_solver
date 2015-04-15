@@ -21,7 +21,7 @@ class ComputerGuess
     end
   end
 
-  def get_computer_guess 
+  def get_computer_guess
     @computer_guess = possible_guesses.sample
     @previous_guesses << computer_guess
     @possible_guesses.delete(computer_guess)
