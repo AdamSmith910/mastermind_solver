@@ -7,27 +7,28 @@ require_relative "computer_guess.rb"
 
 class MasterMind
   attr_reader :turns, :win, :game_code,
-              :computer_guess, :evaluator,
+              :computer, :evaluator,
               :generator, :ai
 
   def initialize
     @turns = 0
     @win = false
     @game_code = GameCode.new
-    @computer_guess = ComputerGuess.new
+    @computer = ComputerGuess.new
     @evaluator = Evaluate.new
     @generator = Generator.new
     @ai = AI.new
+    generator.generate_possible_codes
   end
 
   def play
-    possible_guesses = computer_guess.find_possible_guesses
+    possible_guesses = generator.possible_guesses
     this_games_code = game_code.get_game_code(possible_guesses)
     puts "\n"
     print possible_guesses.size
     while turns < 1297 && win == false
-      this_guess = computer_guess.get_computer_guess
-      previous_guesses = computer_guess.previous_guesses
+      this_guess = computer.get_computer_guess
+      previous_guesses = computer.previous_guesses
       win?(this_games_code, this_guess)
       puts "\n"
       puts "Turn #{turns + 1}"

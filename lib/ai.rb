@@ -1,16 +1,16 @@
 require "pry"
-require_relative "computer_guess.rb"
+require_relative "generator.rb"
 
 class AI
   attr_reader :test_code, :still_viable_guesses, :computer_guess
 
   def initialize
     @test_code = []
-    @still_viable_guesses = []
     @computer_guess = ComputerGuess.new
   end
 
   def eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
+    @still_viable_guesses = []
     test_white = 0
 
     @test_code = previous_guesses.last
@@ -23,7 +23,7 @@ class AI
       end
     end
 
-    computer_guess.find_possible_guesses(still_viable_guesses)
+    computer_guess.establish_still_viable(still_viable_guesses)
   end
 
   def provisional_black(guess_option)

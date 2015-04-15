@@ -3,27 +3,28 @@ require_relative "generator.rb"
 
 class ComputerGuess
   attr_reader :computer_guess, :previous_guesses,
-              :possible_guesses, :generator
+              :possible_guesses, :still_viable,
+              :generator
 
   def initialize
     @computer_guess = []
     @previous_guesses = []
     @possible_guesses = []
+    @still_viable = nil
     @generator = Generator.new
-    generator.generate_possible_codes
   end
 
-  def find_possible_guesses(still_viable_guesses = nil)
-    if still_viable_guesses == nil
-      @possible_guesses = generator.possible_guesses
-    else
-      @possible_guesses = still_viable_guesses
-    end
+  def establish_still_viable(still_viable)
+    @still_viable = still_viable
   end
 
   def get_computer_guess
+    generator.generate_possible_codes(@still_viable)
+    @possible_guesses = generator.possible_guesses
+    @possible_guesses.delete(previous_guesses.last)
     @computer_guess = possible_guesses.sample
     @previous_guesses << computer_guess
-    @possible_guesses.delete(computer_guess)
+
+    @computer_guess
   end
 end
