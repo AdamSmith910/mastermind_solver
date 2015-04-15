@@ -9,31 +9,27 @@ class Generator
     @possible_guesses = []
   end
 
-  def generate_possible_codes(still_viable_guesses = nil)
-    if still_viable_guesses == nil
-      initial_combos
-      color_combo = colors.combination(2).to_a
-      color_combo.each do |element|
-        @possible_codes << element
-      end
-      color_combo.each do |element|
-        @possible_codes << element.reverse
-      end
-
-      initial_guesses
-      guess_combo = possible_codes.combination(2).to_a
-      guess_combo.each do |element|
-        @possible_guesses << element.flatten
-      end
-
-      guess_combo.each do |element|
-        @possible_guesses << element.reverse.flatten
-      end
-
-      @possible_guesses = possible_guesses.uniq
-    else
-      @possible_guesses = still_viable_guesses
+  def generate_possible_codes
+    initial_combos
+    color_combo = colors.combination(2).to_a
+    color_combo.each do |element|
+      @possible_codes << element
     end
+    color_combo.each do |element|
+      @possible_codes << element.reverse
+    end
+
+    initial_guesses
+    guess_combo = possible_codes.combination(2).to_a
+    guess_combo.each do |element|
+      @possible_guesses << element.flatten
+    end
+
+    guess_combo.each do |element|
+      @possible_guesses << element.reverse.flatten
+    end
+
+    @possible_guesses = possible_guesses.uniq
   end
 
   def initial_combos

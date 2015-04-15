@@ -36,13 +36,15 @@ class MasterMind
       print this_games_code
       puts "\n"
       print this_guess
-
       evaluator.evaluate_for_black_pegs(this_games_code, this_guess)
       previous_black = evaluator.previous_black
 
       evaluator.evaluate_for_white_pegs(this_games_code, this_guess)
       previous_white = evaluator.previous_white
 
+      if computer.still_viable != nil
+        possible_guesses = computer.still_viable
+      end
       ai.eliminate(previous_guesses, possible_guesses, previous_black, previous_white)
       @turns += 1
     end
