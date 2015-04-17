@@ -17,14 +17,12 @@ class ComputerGuess
     @possible_computer_guesses = still_viable
     @computer_guess = possible_computer_guesses.sample
     @previous_guesses << computer_guess
-    @possible_computer_guesses.delete(computer_guess)
   end
 
   def get_computer_guess
     get_possible
     @computer_guess = possible_computer_guesses.sample
     @previous_guesses << computer_guess 
-    @possible_computer_guesses.delete(computer_guess)
   end
 
   def get_possible
